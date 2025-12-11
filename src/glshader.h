@@ -15,7 +15,7 @@ public:
     void addVertexStage(const std::string& str);
     void addFragmentStage(const std::string& file);
     void addUniform(const std::string& uniform);
-    void compile();
+    void compile() const;
     [[nodiscard]] GLuint getProgramID() const;
     GLint getUniformLocation(const std::string& uniform);
     [[nodiscard]] std::string getName() const { return name; }
@@ -23,7 +23,7 @@ public:
 private:
     static void checkShaderStatus(GLuint shaderID);
     static void checkProgramStatus(GLuint programID);
-    void add_shader(GLuint shaderID, const std::string& str);
+    void add_shader(GLuint shaderID, const std::string& str) const;
 
     GLuint programID        = 0;
     GLuint vertexShaderID   = 0;

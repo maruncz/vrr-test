@@ -15,7 +15,7 @@ void Strip::draw(float pos)
     glUniform1f(posUniformLocation, pos);
     glBindVertexArray(VAOID);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    GLMisc::checkGLerror(HERE);
+    GLMisc::checkGLerror();
 }
 
 void Strip::initShader()
@@ -39,5 +39,5 @@ void Strip::initShader()
                  vertices.data(), GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
-    GLMisc::checkGLerror(HERE);
+    GLMisc::checkGLerror();
 }

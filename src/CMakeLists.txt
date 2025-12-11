@@ -4,6 +4,7 @@ set(VRR_TEST_SRCS
     glshader.cpp
     glshader.h
     main.cpp
+    misc.hpp
     strip.cpp
     strip.hpp
     window.cpp

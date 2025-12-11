@@ -4,7 +4,6 @@
 #include <format>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <iostream>
 #include <print>
 #include <source_location>
 #include <stdexcept>
@@ -40,14 +39,14 @@ void Window::exec()
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         glClear(GL_COLOR_BUFFER_BIT);
-        GLMisc::checkGLerror(HERE);
+        GLMisc::checkGLerror();
 
         strip.draw(0.0F);
 
         glfwSwapBuffers(window);
-        GLMisc::checkGLerror(HERE);
+        GLMisc::checkGLerror();
         glfwPollEvents();
-        GLMisc::checkGLerror(HERE);
+        GLMisc::checkGLerror();
     }
 }
 
@@ -88,7 +87,7 @@ void Window::createWindow(int width, int height, const char *title, GLFWmonitor 
     };
     glfwSetKeyCallback(window, func);
 #endif
-    GLMisc::checkGLerror(HERE);
+    GLMisc::checkGLerror();
 }
 
 void Window::onkeyboard(GLFWwindow* window, int key,
@@ -115,17 +114,17 @@ void Window::initGL()
         glDebugMessageCallback(Window::glDebugOutput, nullptr);
         glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0,
                               nullptr, GL_TRUE);
-        GLMisc::checkGLerror(HERE);
+        GLMisc::checkGLerror();
     }
 #endif
 
-    std::cout << glGetString(GL_RENDERER) << "\n"
-              << glGetString(GL_VERSION) << '\n';
-    //std::println("{}\n{}", glGetString(GL_RENDERER), glGetString(GL_VERSION));
+    std::println("{}\n{}",
+                 reinterpret_cast<const char*>(glGetString(GL_RENDERER)),
+                 reinterpret_cast<const char*>(glGetString(GL_VERSION)));
     glEnable(GL_MULTISAMPLE);
     glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
 
-    GLMisc::checkGLerror(HERE);
+    GLMisc::checkGLerror();
 }
 
 void Window::processKeyboardInput()
