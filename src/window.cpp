@@ -119,13 +119,13 @@ void Window::onkeyboard(GLFWwindow* window, int key,
 
     if (key == GLFW_KEY_W && action == GLFW_PRESS)
     {
-        speed *= 1.05F;
+        speed *= speedStep;
         std::println("speed {}", speed);
         std::cout.flush();
     }
     if (key == GLFW_KEY_S && action == GLFW_PRESS)
     {
-        speed /= 1.05F;
+        speed /= speedStep;
         std::println("speed {}", speed);
         std::cout.flush();
     }
@@ -259,8 +259,12 @@ void Window::onFramebufferSize(GLFWwindow* window, int width, int height)
 
 double Window::calcPos() const
 {
+    static auto lastTime  = glfwGetTime();
+    static double phase   = 0.0;
     const auto time = glfwGetTime();
-    return std::sin(2 * std::numbers::pi * speed * time);
+    phase                += 2 * std::numbers::pi * speed * (time - lastTime);
+    lastTime              = time;
+    return std::sin(phase);
 }
 
 void Window::update_fps_counter(double frametime)

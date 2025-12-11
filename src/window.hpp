@@ -44,9 +44,10 @@ private:
     GLFWwindow *window   = nullptr;
     glm::ivec2 frameBufferSize{0, 0};
 
-    float speed {0.1F};
     Strip strip;
 
+    static constexpr float speedStep {1.3f};
+    float speed {0.1F};
     int vsync         = 1;
     unsigned fpsLimit = 200;
     std::chrono::time_point<std::chrono::steady_clock> lastFrameTime;
