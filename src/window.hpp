@@ -1,6 +1,7 @@
 #ifndef WINDOW_HPP
 #define WINDOW_HPP
 
+#include "strip.hpp"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -31,12 +32,15 @@ private:
                                        GLenum severity, GLsizei length,
                                        const GLchar *message,
                                        const void *userParam);
+    void updatePos();
 
     int win_width = 1600, win_height = 900;
     GLfloat win_aspect   = 1600.0f / 900.0f;
     GLFWwindow *window   = nullptr;
     glm::ivec2 frameBufferSize{0, 0};
 
+    float pos {0.0f};
+    Strip strip;
 };
 
 #endif // WINDOW_HPP

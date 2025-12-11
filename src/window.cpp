@@ -41,6 +41,8 @@ void Window::exec()
         glClear(GL_COLOR_BUFFER_BIT);
         GLMisc::checkGLerror(HERE);
 
+        strip.draw(0.0f);
+
         glfwSwapBuffers(window);
         GLMisc::checkGLerror(HERE);
         glfwPollEvents();
@@ -59,6 +61,7 @@ void Window::createWindow(int width, int height, const char *title, GLFWmonitor 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+    glfwWindowHint(GLFW_SCALE_TO_MONITOR, GL_TRUE);
 #ifndef NDEBUG
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 #endif
@@ -184,4 +187,9 @@ void Window::glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severit
     }
     std::putchar('\n');
     std::putchar('\n');
+}
+
+void Window::updatePos()
+{
+    const auto time = glfwGetTime();
 }
