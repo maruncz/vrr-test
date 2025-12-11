@@ -18,13 +18,13 @@ Window::~Window()
 
 void Window::init()
 {
-    frameBufferSize.x = win_width;
-    frameBufferSize.y = win_height;
-
     createWindow(win_width, win_height, "vrr-test", nullptr,
                  nullptr);
     initGL();
 
+    glfwSetFramebufferSizeCallback(window, onFramebufferSize);
+    glfwGetFramebufferSize(window, &frameBufferSize.x, &frameBufferSize.y);
+    glViewport(0, 0, frameBufferSize.x, frameBufferSize.y);
 
     glfwSwapInterval(1);
 }
@@ -37,7 +37,6 @@ void Window::exec()
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        glViewport(0, 0, frameBufferSize.x, frameBufferSize.y);
         glClear(GL_COLOR_BUFFER_BIT);
         GLMisc::checkGLerror(HERE);
 
@@ -60,7 +59,6 @@ void Window::createWindow(int width, int height, const char *title, GLFWmonitor 
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
-    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
     glfwWindowHint(GLFW_SCALE_TO_MONITOR, GL_TRUE);
 #ifndef NDEBUG
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
@@ -187,6 +185,14 @@ void Window::glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severit
     }
     std::putchar('\n');
     std::putchar('\n');
+}
+
+void Window::onFramebufferSize(GLFWwindow* window, int width, int height)
+{
+    auto w = static_cast<Window*>(glfwGetWindowUserPointer(window));
+    w->frameBufferSize.x = width;
+    w->frameBufferSize.y = height;
+    glViewport(0, 0, width, height);
 }
 
 void Window::updatePos()

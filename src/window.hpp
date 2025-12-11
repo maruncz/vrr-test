@@ -32,6 +32,7 @@ private:
                                        GLenum severity, GLsizei length,
                                        const GLchar *message,
                                        const void *userParam);
+    static void onFramebufferSize(GLFWwindow* window, int width, int height);
     void updatePos();
 
     int win_width = 1600, win_height = 900;
