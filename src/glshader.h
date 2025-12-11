@@ -2,27 +2,27 @@
 #define GLSHADER_H
 
 #include <GL/glew.h>
-#include <glm/glm.hpp>
 #include <map>
 #include <string>
+#include <string_view>
 
 class GLShader
 {
 public:
-    GLShader(const std::string& name);
+    GLShader(std::string_view name);
     ~GLShader();
 
     void addVertexStage(const std::string& str);
     void addFragmentStage(const std::string& file);
     void addUniform(const std::string& uniform);
     void compile();
-    GLuint getProgramID() const;
+    [[nodiscard]] GLuint getProgramID() const;
     GLint getUniformLocation(const std::string& uniform);
-    std::string getName() const;
+    [[nodiscard]] std::string getName() const { return name; }
 
 private:
-    void checkShaderStatus(GLuint shaderID);
-    void checkProgramStatus(GLuint programID);
+    static void checkShaderStatus(GLuint shaderID);
+    static void checkProgramStatus(GLuint programID);
     void add_shader(GLuint shaderID, const std::string& str);
 
     GLuint programID        = 0;

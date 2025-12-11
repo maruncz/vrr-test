@@ -1,11 +1,10 @@
 #ifndef GLMISC_HPP
 #define GLMISC_HPP
 
-
 #include <GL/glew.h>
-#include <iomanip>
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 
 /**
  * @brief macro for easy backtracing
@@ -34,39 +33,43 @@ inline void checkGLerror(const char *file, const char *func, unsigned line)
     std::stringstream s;
     switch (glGetError())
     {
-    case GL_INVALID_ENUM:
-        s << file << ": " << func << ": " << line << ": "
-          << "GL_INVALID_ENUM" << std::endl;
-        throw std::runtime_error(s.str());
-    case GL_INVALID_VALUE:
-        s << file << ": " << func << ": " << line << ": "
-          << "GL_INVALID_VALUE" << std::endl;
-        throw std::runtime_error(s.str());
-    case GL_INVALID_OPERATION:
-        s << file << ": " << func << ": " << line << ": "
-          << "GL_INVALID_OPERATION" << std::endl;
-        throw std::runtime_error(s.str());
-    case GL_INVALID_FRAMEBUFFER_OPERATION:
-        s << file << ": " << func << ": " << line << ": "
-          << "GL_INVALID_FRAMEBUFFER_OPERATION" << std::endl;
-        throw std::runtime_error(s.str());
-    case GL_OUT_OF_MEMORY:
-        s << file << ": " << func << ": " << line << ": "
-          << "GL_OUT_OF_MEMORY" << std::endl;
-        throw std::runtime_error(s.str());
-    case GL_STACK_UNDERFLOW:
-        s << file << ": " << func << ": " << line << ": "
-          << "GL_STACK_UNDERFLOW" << std::endl;
-        throw std::runtime_error(s.str());
-    case GL_STACK_OVERFLOW:
-        s << file << ": " << func << ": " << line << ": "
-          << "GL_STACK_OVERFLOW" << std::endl;
-        throw std::runtime_error(s.str());
-    default: break;
+        case GL_NO_ERROR: return;
+        case GL_INVALID_ENUM:
+            s << file << ": " << func << ": " << line << ": "
+              << "GL_INVALID_ENUM\n";
+            throw std::runtime_error(s.str());
+        case GL_INVALID_VALUE:
+            s << file << ": " << func << ": " << line << ": "
+              << "GL_INVALID_VALUE\n";
+            throw std::runtime_error(s.str());
+        case GL_INVALID_OPERATION:
+            s << file << ": " << func << ": " << line << ": "
+              << "GL_INVALID_OPERATION\n";
+            throw std::runtime_error(s.str());
+        case GL_INVALID_FRAMEBUFFER_OPERATION:
+            s << file << ": " << func << ": " << line << ": "
+              << "GL_INVALID_FRAMEBUFFER_OPERATION\n";
+            throw std::runtime_error(s.str());
+        case GL_OUT_OF_MEMORY:
+            s << file << ": " << func << ": " << line << ": "
+              << "GL_OUT_OF_MEMORY\n";
+            throw std::runtime_error(s.str());
+        case GL_STACK_UNDERFLOW:
+            s << file << ": " << func << ": " << line << ": "
+              << "GL_STACK_UNDERFLOW\n";
+            throw std::runtime_error(s.str());
+        case GL_STACK_OVERFLOW:
+            s << file << ": " << func << ": " << line << ": "
+              << "GL_STACK_OVERFLOW\n";
+            throw std::runtime_error(s.str());
+        default:
+            s << file << ": " << func << ": " << line << ": "
+              << "unknown error\n";
+            throw std::runtime_error(s.str());
     }
 #endif
 }
 
-}
+} // namespace GLMisc
 
 #endif // GLMISC_HPP

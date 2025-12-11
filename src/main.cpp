@@ -2,7 +2,7 @@
 #include <iostream>
 #include <exception>
 
-int main(int, char**)
+int main()
 {
     try
     {
@@ -11,9 +11,9 @@ int main(int, char**)
         window.exec();
         return 0;
     }
-    catch (std::exception &e)
+    catch (const std::exception& e)
     {
-        std::cerr << e.what() << std::endl;
+        std::cerr << e.what() << '\n';
     }
 
 

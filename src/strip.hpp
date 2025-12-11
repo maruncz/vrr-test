@@ -2,7 +2,9 @@
 #define STRIP_HPP
 
 #include "glshader.h"
+#include <array>
 #include <GL/glew.h>
+#include <glm/glm.hpp>
 #include <memory>
 #include <string_view>
 
@@ -20,14 +22,16 @@ private:
 
     std::unique_ptr<GLShader> shader;
 
-    static constexpr float width {0.1f};
-    static constexpr glm::vec2 vertices[4] = {
-        // clang-format off
-        glm::vec2(-1.0f * width, -1.0f),
-        glm::vec2( 1.0f * width, -1.0f),
-        glm::vec2(-1.0f * width,  1.0f),
-        glm::vec2( 1.0f * width,  1.0f)
-        // clang-format on
+    static constexpr float width {0.1F};
+    static constexpr std::array<glm::vec2, 4> vertices {
+        {
+         // clang-format off
+        glm::vec2(-1.0F * width, -1.0F),
+        glm::vec2( 1.0F * width, -1.0F),
+        glm::vec2(-1.0F * width,  1.0F),
+        glm::vec2( 1.0F * width,  1.0F)
+            // clang-format on
+        }
     };
 
     static constexpr std::string_view vertexShader = R"(

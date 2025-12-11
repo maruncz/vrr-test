@@ -1,5 +1,8 @@
 #include "strip.hpp"
 #include "glmisc.hpp"
+#include <GL/glew.h>
+#include <memory>
+#include <string>
 
 void Strip::draw(float pos)
 {
@@ -32,8 +35,8 @@ void Strip::initShader()
 
     glGenBuffers(1, &VBOID);
     glBindBuffer(GL_ARRAY_BUFFER, VBOID);
-    glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(GLfloat), vertices,
-                 GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * 2UL * sizeof(GLfloat),
+                 vertices.data(), GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
     GLMisc::checkGLerror(HERE);

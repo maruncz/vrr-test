@@ -23,9 +23,9 @@ public:
 private:
     void createWindow(int width, int height, const char *title,
                       GLFWmonitor *monitor, GLFWwindow *share);
-    void onkeyboard(GLFWwindow *window, int key, int scancode,
-                    int action, int mods);
-    void initGL();
+    static void onkeyboard(GLFWwindow* window, int key, int scancode,
+                           int action, int mods);
+    static void initGL();
     void processKeyboardInput();
     static void onerror(int error, const char *description);
     static void APIENTRY glDebugOutput(GLenum source, GLenum type, GLuint id,
@@ -36,11 +36,11 @@ private:
     void updatePos();
 
     int win_width = 1600, win_height = 900;
-    GLfloat win_aspect   = 1600.0f / 900.0f;
+    GLfloat win_aspect   = 1600.0F / 900.0F;
     GLFWwindow *window   = nullptr;
     glm::ivec2 frameBufferSize{0, 0};
 
-    float pos {0.0f};
+    float pos {0.0F};
     Strip strip;
 };
 

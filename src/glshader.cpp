@@ -2,8 +2,11 @@
 #include "glmisc.hpp"
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
+#include <string_view>
+#include <vector>
 
-GLShader::GLShader(const std::string& name)
+GLShader::GLShader(std::string_view name)
     : programID(glCreateProgram()), name(name)
 {
 }
@@ -33,12 +36,12 @@ void GLShader::addUniform(const std::string& uniform)
         return;
     }
     /// @todo co kdyz je odoptimalizovany
-    GLint loc = glGetUniformLocation(programID, uniform.c_str());
+    GLint const loc = glGetUniformLocation(programID, uniform.c_str());
     if (loc == -1)
     {
         std::stringstream s;
         s << __FILE__ << ": " << __func__ << ": " << __LINE__ << ": "
-          << "no such uniform: " << uniform << std::endl;
+          << "no such uniform: " << uniform << '\n';
         throw std::runtime_error(s.str());
     }
     uniforms.insert({uniform, loc});
@@ -51,12 +54,12 @@ void GLShader::compile()
     {
         checkProgramStatus(programID);
     }
-    catch (std::string err)
+    catch (const std::runtime_error err)
     {
         std::stringstream s;
         s << __FILE__ << ": " << __func__ << ": " << __LINE__ << ": "
-          << "error linking shader program: " << std::endl
-          << err;
+          << "error linking shader program: " << '\n'
+          << err.what();
         throw std::runtime_error(s.str());
     }
 
@@ -91,7 +94,7 @@ GLint GLShader::getUniformLocation(const std::string& uniform)
     {
         std::stringstream s;
         s << __FILE__ << ": " << __func__ << ": " << __LINE__ << ": "
-          << "no such uniform: " << uniform << std::endl;
+          << "no such uniform: " << uniform << '\n';
         throw std::runtime_error(s.str());
     }
     return it->second;
@@ -99,63 +102,56 @@ GLint GLShader::getUniformLocation(const std::string& uniform)
 
 void GLShader::checkShaderStatus(GLuint shaderID)
 {
-    GLint compileStatus;
+    GLint compileStatus = 0;
     glGetShaderiv(shaderID, GL_COMPILE_STATUS, &compileStatus);
     if (compileStatus != GL_TRUE)
     {
-        GLint infoLogLength;
+        GLint infoLogLength = 0;
         glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &infoLogLength);
-        auto* buffer = new GLchar[infoLogLength]();
+        std::vector<GLchar> buffer(infoLogLength);
 
-        glGetShaderInfoLog(shaderID, infoLogLength, nullptr, buffer);
+        glGetShaderInfoLog(shaderID, infoLogLength, nullptr, buffer.data());
         std::stringstream s;
-        s << __FILE__ << ": " << __func__ << ": " << __LINE__ << ": " << buffer
-          << std::endl;
-        delete[] buffer;
+        s << __FILE__ << ": " << __func__ << ": " << __LINE__ << ": "
+          << buffer.data() << '\n';
         throw std::runtime_error(s.str());
     }
 }
 
 void GLShader::checkProgramStatus(GLuint programID)
 {
-    GLint linkStatus;
+    GLint linkStatus = 0;
     glGetProgramiv(programID, GL_LINK_STATUS, &linkStatus);
     if (linkStatus != GL_TRUE)
     {
-        GLint infoLogLength;
+        GLint infoLogLength = 0;
         glGetProgramiv(programID, GL_INFO_LOG_LENGTH, &infoLogLength);
-        auto* buffer = new GLchar[infoLogLength]();
+        std::vector<GLchar> buffer(infoLogLength);
 
-        glGetProgramInfoLog(programID, infoLogLength, nullptr, buffer);
+        glGetProgramInfoLog(programID, infoLogLength, nullptr, buffer.data());
         std::stringstream s;
-        s << __FILE__ << ": " << __func__ << ": " << __LINE__ << ": " << buffer
-          << std::endl;
-        delete[] buffer;
+        s << __FILE__ << ": " << __func__ << ": " << __LINE__ << ": "
+          << buffer.data() << '\n';
         throw std::runtime_error(s.str());
     }
 }
 
 void GLShader::add_shader(GLuint shaderID, const std::string& str)
 {
-    const auto ptr = str.c_str();
+    const auto* const ptr = str.c_str();
     glShaderSource(shaderID, 1, &ptr, nullptr);
     glCompileShader(shaderID);
     try
     {
         checkShaderStatus(shaderID);
     }
-    catch (std::string err)
+    catch (const std::runtime_error err)
     {
         std::stringstream s;
         s << __FILE__ << ": " << __func__ << ": " << __LINE__ << ": "
-          << "error compiling shader: " << str << std::endl
-          << err;
+          << "error compiling shader: " << str << '\n'
+          << err.what();
         throw std::runtime_error(s.str());
     }
     glAttachShader(programID, shaderID);
-}
-
-std::string GLShader::getName() const
-{
-    return name;
 }
