@@ -1,12 +1,16 @@
 #include "window.hpp"
 #include "glmisc.hpp"
+#include <cmath>
 #include <cstdio>
 #include <format>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <iostream>
+#include <numbers>
 #include <print>
 #include <source_location>
 #include <stdexcept>
+#include <thread>
 
 Window::~Window()
 {
@@ -27,21 +31,28 @@ void Window::init()
     glfwGetFramebufferSize(window, &frameBufferSize.x, &frameBufferSize.y);
     glViewport(0, 0, frameBufferSize.x, frameBufferSize.y);
 
-    glfwSwapInterval(1);
+    glfwSwapInterval(vsync);
 }
 
 void Window::exec()
 {
+    lastFrameTime = std::chrono::steady_clock::now();
     while (glfwWindowShouldClose(window) == 0)
     {
-        processKeyboardInput();
+        update_fps_counter(get_frametime());
+        const auto waitUntil = lastFrameTime
+                             + std::chrono::microseconds(static_cast<unsigned>(
+                                 1'000'000.0 / fpsLimit));
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         glClear(GL_COLOR_BUFFER_BIT);
         GLMisc::checkGLerror();
 
-        strip.draw(0.0F);
+        strip.draw(calcPos());
+
+        std::this_thread::sleep_until(waitUntil);
+        lastFrameTime = waitUntil;
 
         glfwSwapBuffers(window);
         GLMisc::checkGLerror();
@@ -79,14 +90,13 @@ void Window::createWindow(int width, int height, const char *title, GLFWmonitor 
     glfwMakeContextCurrent(window);
     glfwSetWindowUserPointer(window, this);
 
-#if 0
     auto func = [](GLFWwindow *window, int key, int scancode, int action,
                    int mods) {
         static_cast<Window *>(glfwGetWindowUserPointer(window))
         ->onkeyboard(window, key, scancode, action, mods);
     };
     glfwSetKeyCallback(window, func);
-#endif
+
     GLMisc::checkGLerror();
 }
 
@@ -94,9 +104,56 @@ void Window::onkeyboard(GLFWwindow* window, int key,
                         [[maybe_unused]] int scancode, int action,
                         [[maybe_unused]] int mods)
 {
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    if ((key == GLFW_KEY_ESCAPE || key == GLFW_KEY_Q) && action == GLFW_PRESS)
     {
         glfwSetWindowShouldClose(window, GL_TRUE);
+    }
+
+    if (key == GLFW_KEY_V && action == GLFW_PRESS)
+    {
+        vsync = (vsync == 0) ? 1 : 0;
+        glfwSwapInterval(vsync);
+        std::println("swap interval {}", vsync);
+        std::cout.flush();
+    }
+
+    if (key == GLFW_KEY_W && action == GLFW_PRESS)
+    {
+        speed *= 1.05F;
+        std::println("speed {}", speed);
+        std::cout.flush();
+    }
+    if (key == GLFW_KEY_S && action == GLFW_PRESS)
+    {
+        speed /= 1.05F;
+        std::println("speed {}", speed);
+        std::cout.flush();
+    }
+
+    if (key == GLFW_KEY_E && action == GLFW_PRESS)
+    {
+        fpsLimit += 10;
+        std::println("fps limit {}", fpsLimit);
+        std::cout.flush();
+    }
+    if (key == GLFW_KEY_D && action == GLFW_PRESS)
+    {
+        fpsLimit -= 10;
+        std::println("fps limit {}", fpsLimit);
+        std::cout.flush();
+    }
+
+    if (key == GLFW_KEY_R && action == GLFW_PRESS)
+    {
+        fpsLimit += 1;
+        std::println("fps limit {}", fpsLimit);
+        std::cout.flush();
+    }
+    if (key == GLFW_KEY_F && action == GLFW_PRESS)
+    {
+        fpsLimit -= 1;
+        std::println("fps limit {}", fpsLimit);
+        std::cout.flush();
     }
 }
 
@@ -121,18 +178,11 @@ void Window::initGL()
     std::println("{}\n{}",
                  reinterpret_cast<const char*>(glGetString(GL_RENDERER)),
                  reinterpret_cast<const char*>(glGetString(GL_VERSION)));
+    std::cout.flush();
     glEnable(GL_MULTISAMPLE);
     glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
 
     GLMisc::checkGLerror();
-}
-
-void Window::processKeyboardInput()
-{
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-    {
-        glfwSetWindowShouldClose(window, GL_TRUE);
-    }
 }
 
 void Window::onerror(int error, const char *description)
@@ -207,7 +257,33 @@ void Window::onFramebufferSize(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
-void Window::updatePos()
+double Window::calcPos() const
 {
     const auto time = glfwGetTime();
+    return std::sin(2 * std::numbers::pi * speed * time);
+}
+
+void Window::update_fps_counter(double frametime)
+{
+    static int frame_count;
+    static double time  = 0;
+    time               += frametime;
+    if (time > 1)
+    {
+        const auto fps = frame_count / time;
+        std::println("fps: {:>6.2f}", fps);
+        std::cout.flush();
+        frame_count = 0;
+        time        = 0;
+    }
+    ++frame_count;
+}
+
+double Window::get_frametime()
+{
+    static auto pervious_seconds = glfwGetTime();
+    const auto current_seconds   = glfwGetTime();
+    auto lastFrameTime           = current_seconds - pervious_seconds;
+    pervious_seconds             = current_seconds;
+    return lastFrameTime;
 }
