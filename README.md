@@ -41,6 +41,6 @@ This project uses CMake for its build system. Follow these steps to build the ap
 
 4.  **Run the application:**
     ```bash
-    ./build/vrr-demo
+    ./build/vrr-test
     ```
     
