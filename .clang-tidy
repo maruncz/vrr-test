@@ -1,0 +1,28 @@
+---
+Checks: >
+  -*,
+  bugprone-*,
+  -bugprone-easily-swappable-parameters,
+  cert-*,
+  -cert-dcl21-cpp,
+  clang-*,
+  cppcoreguidelines-*,
+  -cppcoreguidelines-avoid-non-const-global-variables,
+  -cppcoreguidelines-non-private-member-variables-in-classes,
+  -cppcoreguidelines-pro-bounds-constant-array-index,
+  hicpp-exception-baseclass,
+  hicpp-multiway-paths-covered,
+  llvm-namespace-comment,
+  misc-*,
+  -misc-non-private-member-variables-in-classes,
+  modernize-*,
+  -modernize-use-trailing-return-type,
+  performance-*,
+  readability-*,
+  -readability-function-cognitive-complexity,
+  -readability-identifier-length,
+  -readability-else-after-return
+
+CheckOptions:
+ - { key: hicpp-multiway-paths-covered.WarnOnMissingElse, value: true }
+ 

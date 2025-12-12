@@ -1,72 +1,54 @@
 #ifndef GLMISC_HPP
 #define GLMISC_HPP
 
-
+#include "misc.hpp"
+#include <format>
 #include <GL/glew.h>
-#include <iomanip>
-#include <iostream>
-#include <sstream>
-
-/**
- * @brief macro for easy backtracing
- * @details this macro combines `__FILE__`, `__func__` and `__LINE__` macros to
- * fill GLMisc::checkGLerror anf GLMisc::checkGLFBstatus arguments
- */
-#define HERE __FILE__, __func__, __LINE__
+#include <source_location>
+#include <stdexcept>
 
 namespace GLMisc
 {
 
 /**
  * @brief checks if opengl set error
- * @param file name of file where error occurred
- * @param func name of function where error occurred
- * @param line line number where error occurred
+ * @param loc location of error
  * @throw std::runtime_error with position and error string
  * @note this function does nothing in Release mode
  */
-#ifdef NDEBUG
-inline void checkGLerror(const char *, const char *, unsigned)
+inline void checkGLerror([[maybe_unused]] const std::source_location& loc
+                         = std::source_location::current())
 {
-#else
-inline void checkGLerror(const char *file, const char *func, unsigned line)
-{
-    std::stringstream s;
+#ifndef NDEBUG
     switch (glGetError())
     {
-    case GL_INVALID_ENUM:
-        s << file << ": " << func << ": " << line << ": "
-          << "GL_INVALID_ENUM" << std::endl;
-        throw std::runtime_error(s.str());
-    case GL_INVALID_VALUE:
-        s << file << ": " << func << ": " << line << ": "
-          << "GL_INVALID_VALUE" << std::endl;
-        throw std::runtime_error(s.str());
-    case GL_INVALID_OPERATION:
-        s << file << ": " << func << ": " << line << ": "
-          << "GL_INVALID_OPERATION" << std::endl;
-        throw std::runtime_error(s.str());
-    case GL_INVALID_FRAMEBUFFER_OPERATION:
-        s << file << ": " << func << ": " << line << ": "
-          << "GL_INVALID_FRAMEBUFFER_OPERATION" << std::endl;
-        throw std::runtime_error(s.str());
-    case GL_OUT_OF_MEMORY:
-        s << file << ": " << func << ": " << line << ": "
-          << "GL_OUT_OF_MEMORY" << std::endl;
-        throw std::runtime_error(s.str());
-    case GL_STACK_UNDERFLOW:
-        s << file << ": " << func << ": " << line << ": "
-          << "GL_STACK_UNDERFLOW" << std::endl;
-        throw std::runtime_error(s.str());
-    case GL_STACK_OVERFLOW:
-        s << file << ": " << func << ": " << line << ": "
-          << "GL_STACK_OVERFLOW" << std::endl;
-        throw std::runtime_error(s.str());
-    default: break;
+        case GL_NO_ERROR: return;
+        case GL_INVALID_ENUM:
+            throw std::runtime_error(std::format("{}: GL_INVALID_ENUM\n", loc));
+        case GL_INVALID_VALUE:
+            throw std::runtime_error(
+                std::format("{}: GL_INVALID_VALUE\n", loc));
+        case GL_INVALID_OPERATION:
+            throw std::runtime_error(
+                std::format("{}: GL_INVALID_OPERATION\n", loc));
+        case GL_INVALID_FRAMEBUFFER_OPERATION:
+            throw std::runtime_error(
+                std::format("{}: GL_INVALID_FRAMEBUFFER_OPERATION\n", loc));
+        case GL_OUT_OF_MEMORY:
+            throw std::runtime_error(
+                std::format("{}: GL_OUT_OF_MEMORY\n", loc));
+        case GL_STACK_UNDERFLOW:
+            throw std::runtime_error(
+                std::format("{}: GL_STACK_UNDERFLOW\n", loc));
+        case GL_STACK_OVERFLOW:
+            throw std::runtime_error(
+                std::format("{}: GL_STACK_OVERFLOW\n", loc));
+        default:
+            throw std::runtime_error(std::format("{}: unknown error\n", loc));
     }
 #endif
 }
 
-}
+} // namespace GLMisc
 
 #endif // GLMISC_HPP
