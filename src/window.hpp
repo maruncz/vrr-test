@@ -46,7 +46,7 @@ private:
 
     Strip strip;
 
-    static constexpr float speedStep {1.3f};
+    static constexpr float speedStep {1.3F};
     float speed {0.1F};
     int vsync         = 1;
     unsigned fpsLimit = 200;

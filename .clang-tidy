@@ -12,7 +12,6 @@ Checks: >
   -cppcoreguidelines-pro-bounds-constant-array-index,
   hicpp-exception-baseclass,
   hicpp-multiway-paths-covered,
-  llvm-include-order,
   llvm-namespace-comment,
   misc-*,
   -misc-non-private-member-variables-in-classes,

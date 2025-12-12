@@ -1,5 +1,7 @@
 #include "window.hpp"
 #include "glmisc.hpp"
+#include "misc.hpp"
+#include <chrono>
 #include <cmath>
 #include <cstdio>
 #include <format>
@@ -11,7 +13,6 @@
 #include <source_location>
 #include <stdexcept>
 #include <thread>
-#include "misc.hpp"
 
 Window::~Window()
 {
@@ -26,7 +27,8 @@ void Window::init()
 {
     if (glfwInit() == 0)
     {
-        throw std::runtime_error(std::format("{:short}: cannot initialize glfw", std::source_location::current()));
+        throw std::runtime_error(std::format("{:short}: cannot initialize glfw",
+                                             std::source_location::current()));
     }
     createWindow(win_width, win_height, "vrr-test", nullptr,
                  nullptr);
@@ -68,7 +70,6 @@ void Window::exec()
 
 void Window::createWindow(int width, int height, const char *title, GLFWmonitor *monitor, GLFWwindow *share)
 {
-
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);

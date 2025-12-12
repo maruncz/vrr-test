@@ -11,6 +11,10 @@ class GLShader
 public:
     GLShader(std::string_view name);
     ~GLShader();
+    GLShader(const GLShader& o)            = delete;
+    GLShader(GLShader&& o)                 = delete;
+    GLShader* operator=(const GLShader& o) = delete;
+    GLShader* operator=(GLShader&& o)      = delete;
 
     void addVertexStage(const std::string& str);
     void addFragmentStage(const std::string& file);
