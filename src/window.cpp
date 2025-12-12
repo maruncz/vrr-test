@@ -11,6 +11,7 @@
 #include <source_location>
 #include <stdexcept>
 #include <thread>
+#include "misc.hpp"
 
 Window::~Window()
 {
@@ -23,6 +24,10 @@ Window::~Window()
 
 void Window::init()
 {
+    if (glfwInit() == 0)
+    {
+        throw std::runtime_error(std::format("{:short}: cannot initialize glfw", std::source_location::current()));
+    }
     createWindow(win_width, win_height, "vrr-test", nullptr,
                  nullptr);
     initGL();
@@ -63,11 +68,7 @@ void Window::exec()
 
 void Window::createWindow(int width, int height, const char *title, GLFWmonitor *monitor, GLFWwindow *share)
 {
-    if (glfwInit() == 0)
-    {
-        const auto loc = std::source_location::current();
-        throw std::runtime_error(std::format("{}:{}:{}: cannot initialize glfw", loc.file_name(), loc.function_name(), loc.line()));
-    }
+
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
